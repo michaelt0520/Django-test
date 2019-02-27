@@ -1,0 +1,4 @@
+.carousel-inner > .item.active > img {
+    margin: auto;
+    width: 100%;
+}

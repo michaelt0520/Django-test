@@ -1,0 +1,484 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home | TE Studio{% endblock %}
+{% block placeholder %}
+<!--Navbar-->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>               
+            </button>
+            <a href='/'><img class="navbar-brand" class="button" style="padding-left: 60px;" src="{% static 'images/logo/logoimg.png'%}"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar" style="margin-left: 150px">
+            <ul class="nav navbar-nav">
+                <li><a href="#content-lightnovel">Light Novel</a></li>
+                <li><a href="#content-audio">Truyện Audio</a></li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="#content-aboutus">ABOUT</a></li>
+                <li style="margin-left: 10px">
+                    <form class="form-inline my-2 my-lg-0" style="margin-top: 4px;" method="GET" action="{% url 'lightnovel:danhsachsearch' %}">
+                        <input class="form-control mr-sm-2" name="q" value="{{request.GET.q}}" placeholder="search..">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                    </form>
+                </li>
+                <li style="margin-left: 10px">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}">Đăng xuất</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Đăng nhập</a>
+                    {% endif %}
+                </li>
+                <li class="dropdown" style="margin-left: 10x">
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Yêu thích</a>
+                        <ul class="dropdown-menu">
+                            {% for ln in LN_All %}
+                                {% for tk in ln.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'lightnovel:ln_unfollow' lightnovel_id=ln.id %}">X</a><a style="display:inline-block; width: 400px;" href="/lightnovel/{{ ln.id }}">{{ ln.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {% for au in AU_All %}
+                                {% for tk in au.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'audio:au_unfollow' audio_id=au.id %}">X</a><a style="display:inline-block; width: 400px;" href="/audio/{{ au.id }}">{{ au.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+        <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+        <li data-target="#myCarousel" data-slide-to="1"></li>
+        <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+    
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+        <div class="item active">
+            <img src="{% static 'images/SlideShow/DragonBall.jpg' %}" alt="New York" width="1200" height="700">
+            <div class="carousel-caption">
+                <h3>Dragon Ball</h3>
+                <p>Phim làm nên tuổi thơ của biết bao thế hệ trẻ.</p>
+            </div>      
+        </div>
+
+        <div class="item">
+            <img src="{% static 'images/SlideShow/HightschoolDxD.jpg'%}" alt="Chicago" width="1200" height="700">
+            <div class="carousel-caption">
+                <h3>High School DxD</h3>
+                <p>Không biết nói gì hết, tự search Google đi.</p>
+            </div>      
+        </div>
+    
+        <div class="item">
+            <img src="{% static 'images/SlideShow/TokyoGhoul.jpg' %}" alt="Los Angeles" width="1200" height="700">
+            <div class="carousel-caption">
+                <h3>Tokyo Ghoul</h3>
+                <p>Bộ phim ra mắt gần đây đã làm biết bao thanh niên lên cơn.</p>
+            </div>      
+        </div>
+    </div>
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+
+<div class="container" style="padding: 10px;">
+    {% if user.is_authenticated %}
+        <h3 style="text-align: center; margin: 20px 0px; height: 40px; background-color: rgb(100, 0, 0); font-size: 26px; color: whitesmoke; padding: 8px 20px;">Hi {{ user.username }}!</h3>
+    {% endif %}
+</div>
+
+<div class="container" style="margin-top: 10px; color: rgb(153, 153, 153); background-color: white; background: rgba(0, 0, 0, 0.6); padding: 10px;">
+    <div class="container">
+        <div style="width: 300px; height: 50px; background-color: rgb(100, 0, 0); margin-left: -15px;">
+            <h3 style="font-size: 30px; color: whitesmoke; padding: 8px 20px;">Truyện HOT</h3>
+        </div>
+    </div>
+
+    <div id="myCarousel1" class="carousel slide container" data-ride="carousel" style="padding: 10px 0px; margin-top: 20px; margin-right: 10px;">
+        <ol class="carousel-indicators">
+            <li data-target="#myCarousel1" data-slide-to="0"></li>
+            <li data-target="#myCarousel1" data-slide-to="1"></li>
+            <li data-target="#myCarousel1" data-slide-to="2"></li>
+            <li data-target="#myCarousel1" data-slide-to="3"></li>
+        </ol>
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+            {% for i in "xxxx" %}
+                {% if forloop.counter == 1 %}
+                <div class="item active">
+                    <div class="row" style="padding: 0px 20px;">
+                        {% for lightnovel in LN_MoiDang %}
+                            {% if forloop.counter <= 6 %}
+                                <div class="col-sm-2">
+                                    <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga-carousel" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="item">
+                    <div class="row" style="padding: 0px 20px;">
+                        {% for lightnovel in LN_MoiDang %}
+                            {% if forloop.counter <= 6 %}
+                                <div class="col-sm-2">
+                                    <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga-carousel" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <!-- Left and right controls -->
+        <a class="left carousel-control" href="#myCarousel1" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="right carousel-control" style="margin-right: 10px;" href="#myCarousel1" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
+
+    <!-- Light Novel -->
+    <div id="content-lightnovel" class="container" style="padding-top: 30px;">
+            <div style="width: 300px; height: 50px; background-color: rgb(100, 0, 0); margin-left: -15px;">
+                <h3 style="font-size: 30px; color: whitesmoke; padding: 8px 20px;">LIGHT NOVEL</h3>
+            </div>
+        <div style="padding-top: 10px">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div style="background-color: rgb(100, 0, 0); position: relative; width: 150px; height: 30px; float: right; margin-top: 20px;">
+                        <div class="theloai">
+                            <a class="nav-link nav" data-toggle="dropdown" href="#" style="color: white;">THỂ LOẠI
+                                    <span class="caret"></span>
+                                </a>
+                            <ul class="dropdown-menu nav">
+                                {% for theloai in all_theloaiLN %}
+                                    <li><a href="/lightnovel/the-loai/{{ theloai.id }}">{{ theloai.ten }}</a></li>
+                                {% endfor %}    
+                            </ul>
+                        </div>
+                    </div>
+                    <div class='tabs tabs_animate' style="background-color: rgb(100, 0, 0); margin-top: 20px; margin-left: -15px;">
+                        <ul style="list-style-type: none;" class='horizontal nav nav-tabs'>
+                            
+                            <li class="active"><a class="nav-truyen" style="color: white;" data-toggle="tab" href="#tab-1">MỚI ĐĂNG</a></li>
+                            <li><a class="nav-truyen" data-toggle="tab" style="color: white;" href="#tab-2">MỚI CẬP NHẬT</a></li>
+                            <li><a class="nav-truyen" data-toggle="tab" style="color: white;" href="#tab-3">MỚI HOÀN THÀNH</a></li>
+                            
+                        </ul>
+                        <div id='tab-1' style="background-color: #333;">
+                            <div class="row text-center scrollme animateme" 
+                                data-when="enter"
+                                data-from="0.5"
+                                data-to="0"
+                                data-crop="false"
+                                data-opacity="0"
+                                data-scale="1.5" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if LN_MoiDang %}
+                                    {% for lightnovel in LN_MoiDang %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                                                <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ lightnovel.tentruyen }}</strong></p>
+                                                <a href="/lightnovel/{{ lightnovel.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id='tab-2' style="background-color: #333;">
+                            <div class="row text-center" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if LN_MoiCapNhat %}
+                                    {% for ln in LN_MoiCapNhat %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                {% for lightnovel in LN_All %}
+                                                    {% if lightnovel.id == ln.lightnovel__id %}
+                                                        <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                                                        <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ lightnovel.tentruyen }}</strong></p>
+                                                        <a href="/lightnovel/{{ lightnovel.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                                    {% endif %} 
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+    
+    
+                        <div id='tab-3' style="background-color: #333;">
+                            <div class="row text-center" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if LN_DaHoanThanh %}
+                                    {% for lightnovel in LN_DaHoanThanh %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                                                <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ lightnovel.tentruyen }}</strong></p>
+                                                <a href="/lightnovel/{{ lightnovel.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-sm-4 sidenav" style="margin-top: 20px;">
+                    <div class="well">
+                        <p style="font-size: 24px; letter-spacing: 3px; font-weight: bold; text-align: center; color: rgb(100, 0, 0); "><span class="glyphicon glyphicon-tower"></span> Thể loại</p>
+                    </div>
+                    <div class="well">
+                        <div class="row">
+                            <div class="col-sm-6 showtheloai">
+                                {% for tl in all_theloaiLN %}
+                                    {% if forloop.counter <= 15 %}
+                                        <a href="/lightnovel/the-loai/{{ tl.id }}" style="">{{ tl.ten }}</a></br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-6 showtheloai">
+                                {% for tl in all_theloaiLN %}
+                                    {% if forloop.counter > 15 %}
+                                        <a href="/lightnovel/the-loai/{{ tl.id }}">{{ tl.ten }}</a></br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well">
+                        <p style="text-align: center">Quảng cáo here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Truyện Audio-->
+
+    <div id="content-audio" class="container" style="padding-top: 30px;">
+            <div style="width: 300px; height: 50px; background-color: rgb(100, 0, 0); margin-left: -15px;">
+                <h3 style="font-size: 30px; color: whitesmoke; padding: 8px 20px;">Truyện AUDIO</h3>
+            </div>
+        <div style="padding-top: 10px">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div style="background-color: rgb(100, 0, 0); position: relative; width: 150px; height: 30px; float: right; margin-top: 20px;">
+                        <div class="theloai">
+                            <a class="nav-link nav" data-toggle="dropdown" href="#" style="color: white;">THỂ LOẠI
+                                    <span class="caret"></span>
+                                </a>
+                            <ul class="dropdown-menu nav">
+                                {% for theloai in all_theloaiAU %}
+                                    <li><a href="/audio/the-loai/{{ theloai.id }}">{{ theloai.ten }}</a></li>
+                                {% endfor %}   
+                            </ul>
+                        </div>
+                    </div>
+                    <div class='tabs tabs_animate' style="background-color: rgb(100, 0, 0); margin-top: 20px; margin-left: -15px;">
+                        <ul style="list-style-type: none;" class='horizontal nav nav-tabs'>
+                            
+                            <li class="active"><a class="nav-truyen" style="color: white;" data-toggle="tab" href="#tab-1">MỚI ĐĂNG</a></li>
+                            <li><a class="nav-truyen" data-toggle="tab" style="color: white;" href="#tab-2">MỚI CẬP NHẬT</a></li>
+                            <li><a class="nav-truyen" data-toggle="tab" style="color: white;" href="#tab-3">MỚI HOÀN THÀNH</a></li>
+                            
+                        </ul>
+                        <div id='tab-1' style="background-color: #333;">
+                            <div class="row text-center scrollme animateme" 
+                                data-when="enter"
+                                data-from="0.5"
+                                data-to="0"
+                                data-crop="false"
+                                data-opacity="0"
+                                data-scale="1.5" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if AU_MoiDang %}
+                                    {% for audio in AU_MoiDang %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                <a href="/audio/{{ audio.id }}"><img class="manga" src="{{ audio.anh.url }}" alt="{{ audio.tentruyen }}"></a>
+                                                <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ audio.tentruyen }}</strong></p>
+                                                <a href="/audio/{{ audio.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div id='tab-2' style="background-color: #333;">
+                            <div class="row text-center" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if AU_MoiCapNhat %}
+                                    {% for ln in AU_MoiCapNhat %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                {% for audio in AU_All %}
+                                                    {% if audio.id == ln.audio__id %}
+                                                        <a href="/audio/{{ audio.id }}"><img class="manga" src="{{ audio.anh.url }}" alt="{{ audio.tentruyen }}"></a>
+                                                        <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ audio.tentruyen }}</strong></p>
+                                                        <a href="/audio/{{ audio.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                                    {% endif %} 
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+    
+    
+                        <div id='tab-3' style="background-color: #333;">
+                            <div class="row text-center" style="padding-top: 15px; margin: 0px 5px;">
+                                {% if AU_DaHoanThanh %}
+                                    {% for audio in AU_DaHoanThanh %}
+                                        <div class="col-lg-4 col-md-6 col-sm-12">
+                                            <div class="thumbnail">
+                                                <a href="/audio/{{ audio.id }}"><img class="manga" src="{{ audio.anh.url }}" alt="{{ audio.tentruyen }}"></a>
+                                                <p style="font-size: 14px; overflow:hidden; white-space:nowrap;"><strong>{{ audio.tentruyen }}</strong></p>
+                                                <a href="/audio/{{ audio.id }}"><button class="btn">Đọc Ngay !</button></a>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                {% else %}
+                                    <h3>Không có truyện trong danh sách</h3>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-sm-4 sidenav" style="margin-top: 20px;">
+                    <div class="well">
+                        <p style="font-size: 24px; letter-spacing: 3px; font-weight: bold; text-align: center; color: rgb(100, 0, 0); "><span class="glyphicon glyphicon-tower"></span> Thể loại</p>
+                    </div>
+                    <div class="well">
+                        <div class="row">
+                            <div class="col-sm-6 showtheloai">
+                                {% for au in all_theloaiAU %}
+                                    {% if forloop.counter <= 15 %}
+                                        <a href="/audio/the-loai/{{ au.id }}">{{ au.ten }}</a></br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="col-sm-6 showtheloai">
+                                {% for au in all_theloaiLN %}
+                                    {% if forloop.counter > 15 %}
+                                        <a href="/audio/the-loai/{{ au.id }}">{{ au.ten }}</a></br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="well">
+                        <p style="text-align: center">Quảng cáo here</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>  
+
+    <!-- About Us -->
+    <div id="content-aboutus" class="container" style="padding-top: 30px; margin-bottom: 30px;">
+        <div style="width: 300px; height: 50px; background-color: rgb(100, 0, 0); margin-left: -15px;">
+            <h3 style="font-size: 30px; color: whitesmoke; padding: 8px 20px;">About Us</h3>
+        </div>
+        <div class="container" style="padding-top: 20px; width: 90%; margin: 0 auto;">
+            <figure>
+                <img alt="Tuấn" style="width: 300px; height: 400px;" src="{% static 'images/aboutus/michaelt.jpg'%}">
+                <figcaption>
+                    <h3>Trần Hải Tuấn</h3>
+                    <p>Tuấn học trường đại học Ngoại Ngữ - Tin Học Tp.HCM (Huflit) khoa CNTT. Hết</p>
+                </figcaption>
+            </figure>
+            
+            <figure>
+                <img alt="Nam" style="width: 300px; height: 400px;" src="{% static 'images/aboutus/nam.jpg'%}">
+                <figcaption>
+                    <h3>Hồ Thái Hoàng Nam</h3>
+                    <p>Nam học trường đại học Ngoại Ngữ - Tin Học Tp.HCM (Huflit) khoa CNTT. Hết</p>
+                </figcaption>
+            </figure>
+
+            <figure>
+                <img alt="Tuấn" style="width: 300px; height: 400px;" src="{% static 'images/aboutus/tuan.jpg'%}">
+                <figcaption>
+                    <h3>Nguyễn Anh Tuấn</h3>
+                    <p>Tuấn học trường đại học Ngoại Ngữ - Tin Học Tp.HCM (Huflit) khoa CNTT. Hết</p>
+                </figcaption>
+            </figure>
+        </div>
+    </div>
+</div>
+<div class="snowflakes" aria-hidden="true">
+    <div class="snowflake">
+        ❅
+    </div>
+    <div class="snowflake">
+        ❅
+    </div>
+    <div class="snowflake">
+        ❆
+    </div>
+    <div class="snowflake">
+        ❄
+    </div>
+    <div class="snowflake">
+        ❅
+    </div>
+    <div class="snowflake">
+        ❆
+    </div>
+    <div class="snowflake">
+        ❄
+    </div>
+    <div class="snowflake">
+        ❅
+    </div>
+    <div class="snowflake">
+        ❆
+    </div>
+    <div class="snowflake">
+        ❄
+    </div>
+</div>
+{% endblock %}

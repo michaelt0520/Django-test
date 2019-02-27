@@ -1,0 +1,65 @@
+.nav-tabs li a {
+    color: #303030;
+}
+nav.navbar.navbar-default.navbar-fixed-top {
+    background-color: #2d2d30;
+    background: black transparent;
+    opacity: 0.8;
+}
+.navbar {
+    font-family: Montserrat, sans-serif;
+    margin-bottom: 0;
+    border: 0;
+    font-size: 11px !important;
+    letter-spacing: 4px;
+}
+.navbar li a, .navbar .navbar-brand { 
+    color: black;
+}
+.navbar-nav li a:hover {
+    color: #aaaaaa !important;
+    box-shadow:inset 0px 0px 2px 0px black;
+}
+.navbar-nav li.active a {
+    color: #303030 !important;
+    background-color: #29292c !important;
+}
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+.open .dropdown-toggle {
+    color: #fff;
+    background-color: #555 !important;
+}
+.dropdown-menu li a {
+    color: #000 !important;
+}
+.dropdown-menu li a:hover {
+    background-color: red !important;
+}
+.carousel-inner img {
+    width: 100%;
+    margin: auto;
+}
+.carousel-caption h3 {
+    color: #fff !important;
+}
+@media (max-width: 600px) {
+  .carousel-caption {
+    display: none;
+  }
+}
+.nav-truyen {
+    font-size: 14px; 
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .25);
+    letter-spacing: 4px;
+}
+.nav-truyen:hover {
+    color: #300 !important;
+    background-color: #fff;
+}
+li.active a {
+    color: #300 !important;
+}

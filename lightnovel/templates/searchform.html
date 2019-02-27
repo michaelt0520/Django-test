@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Home | TE Studio{% endblock %}
+{% block placeholder %}
+
+<!--Navbar-->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>               
+        </button>
+        <a href='/'><img class="navbar-brand" class="button" style="padding-left: 60px;" src="{% static 'images/logo/logoimg.png'%}"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar" style="margin-left: 150px">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Light Novel</a></li>
+                <li><a href="/">Truyện Audio</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/">ABOUT</a></li>
+                <li>
+                    <form class="form-inline" style="margin-top: 4px;" method="GET" action="{% url 'lightnovel:danhsachsearch' %}">
+                        <input class="form-control mr-sm-2" name="q" value="{{request.GET.q}}" placeholder="search..">
+                        <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                    </form>
+                </li>
+                <li style="margin-left: 10px">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'logout' %}">Đăng xuất</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Login</a>
+                    {% endif %}
+                </li>
+                <li class="dropdown" style="margin-left: 10x">
+                    {% if user.is_authenticated %}
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Yêu thích</a>
+                        <ul class="dropdown-menu">
+                            {% for ln in LN_All %}
+                                {% for tk in ln.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'lightnovel:ln_unfollow' lightnovel_id=ln.id %}">X</a><a style="display:inline-block; width: 400px;" href="/lightnovel/{{ ln.id }}">{{ ln.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {% for au in AU_All %}
+                                {% for tk in au.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'audio:au_unfollow' audio_id=au.id %}">X</a><a style="display:inline-block; width: 400px;" href="/audio/{{ au.id }}">{{ au.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 50px; font-size: 14px; color: rgb(153, 153, 153); background-color: white; background: rgba(0, 0, 0, 0.6); padding: 10px;">
+    <img style="width: 100%; height: 350px;" src="{% static 'images/banner/4.jpg'%}">
+    <h3 style="margin-top: 50px; height: 50px; background-color: rgb(100, 0, 0); font-size: 30px; color: whitesmoke; padding: 8px 20px;">{{ text }}</h3>
+
+    <div class="container" style="margin-top:50px; ">
+    {% if result %}
+        {% for lightnovel in result %}
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="thumbnail">
+                <a href="/lightnovel/{{ lightnovel.id }}"><img class="manga" src="{{ lightnovel.anh.url }}" alt="{{ lightnovel.tentruyen }}"></a>
+                <p style="text-align: center; overflow:hidden; white-space:nowrap;"><strong>{{ lightnovel.tentruyen }}</strong></p>
+                <a href="/lightnovel/{{ lightnovel.id }}"><button class="btn button" style="margin: 0 auto; display: block;">Đọc Ngay !</button></a>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <h3>Không tìm thấy truyện</h3>
+    {% endif %}   
+    </div>
+</div>
+
+{% endblock %}

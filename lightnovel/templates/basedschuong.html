@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{% load static %}
+<title>{{ truyen.tentruyen }}</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel='shortcut icon' type='image/x-icon' href="{% static 'images/logo/icon.ico' %}"/>
+<link rel="stylesheet" href="{% static 'style-chapterlist.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}"/>
+  <link rel="stylesheet" href="{% static 'slideshow.css' %}"/>
+  <link rel="stylesheet" href="{% static 'style-nav.css' %}"/>
+  <link rel="stylesheet" href="{% static 'styles.css' %}"/>
+  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/security.js' %}"></script>
+</head>
+<body>
+<div id="fb-root"></div>
+<script async defer src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v3.2&appId=293953951291867&autoLogAppEvents=1"></script>
+  <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
+          <a href='/'><img class="navbar-brand" class="button" style="padding-left: 60px;" src="{% static 'images/logo/logoimg.png'%}"></a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar" style="margin-left: 150px">
+          <ul class="nav navbar-nav">
+            <li><a href="{% url 'lightnovel:index' %}">Light Novel</a></li>
+            <li><a href="{% url 'lightnovel:index' %}">Truyện Audio</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/">ABOUT</a></li>
+            <li>
+                <form class="form-inline" style="margin-top: 4px;" method="GET" action="{% url 'lightnovel:danhsachsearch' %}">
+                    <input class="form-control mr-sm-2" name="q" value="{{request.GET.q}}" placeholder="search..">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                </form>
+            </li>
+            <li style="margin-left: 10px">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'logout' %}">Đăng xuất</a>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </li>
+            <li class="dropdown" style="margin-left: 10x">
+                {% if user.is_authenticated %}
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Yêu thích</a>
+                    <ul class="dropdown-menu">
+                        {% for ln in LN_All %}
+                                {% for tk in ln.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'lightnovel:ln_unfollow' lightnovel_id=ln.id %}">X</a><a style="display:inline-block; width: 400px;" href="/lightnovel/{{ ln.id }}">{{ ln.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+
+                            {% for au in AU_All %}
+                                {% for tk in au.user.all %}
+                                    {% if tk.username == user.username %}
+                                        <li style="display: flex;"><a style="display:inline-block;" href="{% url 'audio:au_unfollow' audio_id=au.id %}">X</a><a style="display:inline-block; width: 400px;" href="/audio/{{ au.id }}">{{ au.tentruyen }}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                    </ul>
+                {% endif %}
+            </li>
+            </ul>
+        </div>
+      </div>
+  </nav>
+
+  <img style="position: absolute; width: 100%; display: block;" src="{% static 'images/banner/1.jpg'%}">
+
+
+  <div class="truyen container" style="padding-top: 200px;">
+    <div class="row" style=" background-color: white; position: relative; padding: 10px; box-shadow: 5px 5px 5px #666; -moz-box-shadow: 5px 5px 5px #666; -webkit-box-shadow: 5px 5px 5px #666;">
+      <div class="col-sm-5">
+        <img class="img-responsive" src="{{ truyen.anh.url }}" alt="{{ truyen.tentruyen }}" style="width: 300px; height: 450px;">
+      </div>
+      <div class="col-sm-7">
+        <div class="row">
+          <div id="demo5">
+              <h1 style="text-align: center; font-size: 70px; font-weight: bold" id="fittext3">{{ truyen.tentruyen }}</h1>
+          </div>
+        </div>
+        
+        <div class="row" style="margin-top: 50px;">
+        <div class="row">
+              <p style="font-weight: bold;">
+              {% if user.is_authenticated %}
+                    {% if flag == False %}
+                        <a href="{% url 'lightnovel:ln_follow' lightnovel_id=truyen.id %}"><span class="glyphicon glyphicon-heart"></span> Theo dõi</a>
+                    {% else %}
+                        <a href="{% url 'lightnovel:ln_unfollow' lightnovel_id=truyen.id %}"><span class="glyphicon glyphicon-heart"></span> Hủy theo dõi</a>
+                    {% endif %}
+              {% endif %}
+              </p>
+          </div>
+          <div class="row">
+              <div class="fb-like" data-href="http://localhost:8000/{{ request.get_full_path }}" data-layout="standard" data-action="like" data-size="small" data-show-faces="true" data-share="true"></div>
+          </div>
+          <div class="row">
+              <p style="font-weight: bold;"><span class="glyphicon glyphicon-user"></span>	&nbsp;Tác giả: <a href="/results/?q={{ truyen.tacgia }}" style="text-decoration: none;"> 	&nbsp;	&nbsp;	&nbsp;	&nbsp;{{ truyen.tacgia }}</a></p>
+          </div>
+          <div class="row">
+              <p style="font-weight: bold;"><span class="glyphicon glyphicon-signal"></span>	&nbsp;Trang thái:	&nbsp;	 {% if truyen.dahoanthanh == True %} Đã hoàn thành {% else %} Đang tiến hành {% endif %}</p>
+          </div>
+          <div class="row">
+              <p style="font-weight: bold;"><span class="glyphicon glyphicon-cloud"></span>	&nbsp;Thể loại:	&nbsp; &nbsp; &nbsp;	 {% for tl in truyen.theloai.all %} {% if forloop.counter == truyen.theloai.all.count %} <a href="/lightnovel/the-loai/{{ tl.id }}">{{ tl.ten }} </a> {% else %} <a href="/lightnovel/the-loai/{{ tl.id }}">{{ tl.ten }}</a>, {% endif %}{% endfor %}</p>
+          </div>
+          <div class="row" style="padding-right: 10px;">
+              <p style="font-weight: bold;"><span class="glyphicon glyphicon-pencil"></span>	&nbsp;Nội dung:	</p>
+              <p>
+                  {{ truyen.gioithieu|linebreaksbr }}
+              </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-top: 20px; padding: 0px 20px;">
+
+        <h3 style="margin-bottom: 10px;">Danh Sách Chương Truyện</h3>
+        
+        <table id="myTable" class="display" style="width:100%;">
+          <thead>
+              <tr>
+                  <th>Tên Chương</th>
+                  <th>Ngày Đăng</th>
+              </tr>
+          </thead>
+          <tbody>
+            {% if all_chuongs %}
+                {% for chuong in all_chuongs %}
+                    <tr>
+                        <td><a href="{% url 'lightnovel:doctruyen' lightnovel_id=truyen.id chuong_id=chuong.id %}">Chương {{ chuong.chuong }}: {{ chuong.tenchuong }}</td>
+                        <td>{{ chuong.ngayup }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+          </tbody>  
+        </table>
+    </div>
+
+  
+    <br><br>
+    <div class="fb-comments" data-href="http://localhost:8000/{{ request.get_full_path }}" data-numposts="5"></div>
+    <br>
+</div>
+
+
+
+<!-- Footer -->
+    <footer class="container-fluid text-center" style="margin-top: 50px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-2">
+                    <img class="img-responsive" src="{% static 'images/logo/logotext.png'%}">
+                </div>
+                <div class="col-sm-10">
+                    <p id="introduce-footer" style="color: white; text-align: left; padding-top: 20px;">
+                    © Copyright 2018 Đồ án Website - Nâng Cao đọc truyện cuối kỳ thấy Thiện - HUFLIT<br />
+                    Trần Hải Tuấn - Hồ Thái Hoàng Nam - Nguyễn Anh Tuấn<br />
+                    Địa chỉ: 155 Sư Vạn Hạnh (nd), Phường 13, Quận 10, TP.HCM.<br />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+  <script type="text/javascript">
+    $("#fittext3").fitText(1.1, { minFontSize: '0px', maxFontSize: '75px' });
+  </script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+    $('#myTable').dataTable()
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $("#demo5 h1").lettering('words').children("span").lettering();
+    });
+    
+  </script>
+  <script src="{% static 'plugin-jquery/jquery.fittext.js'%}"></script>
+  <script src="{% static 'plugin-jquery/jquery.dataTables.min.js'%}" ></script>
+  <script src="{% static 'plugin-jquery/datatables.bootstrap.min.js'%}"></script>
+  <script src="{% static 'plugin-jquery/jquery.lettering.js'%}"></script>
+</body>
+
+</html>
